@@ -25,7 +25,7 @@ MODULE http
     ERROR
         RETRY;
     UNDO
-
+        !Just incase something breaks - panic and close the sockets
         close_sockets;
 
     ENDPROC
@@ -51,11 +51,13 @@ MODULE http
 
         VAR string cmd_ID;
         VAR string cmd_req;
+        VAR num req_len;
 
         !Strips the first four characters to identify the command
         cmd_ID := StrPart(cmd,1,4);
-        !Accesses the actual request related to the command 
-        cmd_req:=StrPart(cmd,6,StrLen(cmd)-4);
+        !Accesses the request related to the command 
+        req_len := StrLen(cmd) - 5;
+        cmd_req:=StrPart(cmd,6, req_len);
 
         TPWrite "ID:"+cmd_ID;
         TPWrite "Request: "+cmd_req;
@@ -73,6 +75,10 @@ MODULE http
                 SocketSend client_socket\Str:= "CLOSING PORT";
                 close_sockets;
             
+            !Request the robot move to a specific position
+            CASE "MVTO":
+                move_to cmd_req;
+            
             !if unprogrammed/unknown command is sent
             DEFAULT:
                 SocketSend client_socket\Str:= "UNKNOWN CMD";
@@ -81,7 +87,30 @@ MODULE http
 
     ENDPROC
 
-
+    
+    !Moves the robot end-affector to a specified posiiton
+    PROC move_to(string target_pos)
+        !decode the target pos into a robtarget variable
+        VAR robtarget rob_trgt_pos;
+        VAR num curr_num;
+        !There are 17 values in one robot target
+        CONST num vals := 17;
+        
+        !Array storing the rob target values
+        VAR num val_arr{17};
+        
+        !Split the target_pos string into an array of values
+        FOR i FROM 1 TO vals DO
+            
+            !Splits the target pos string, and stores it as a number
+            StrToVal(StrPart(), curr_num);
+            
+            val_arr{i} := curr_val;
+        ENDFOR
+        
+        
+        
+    ENDPROC
 
 
 

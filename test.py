@@ -6,6 +6,8 @@
 import socket
 import time
 
+print("Connecting to Socket")
+
 #Open the socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #Connect to the local socket
@@ -24,8 +26,13 @@ fin_time = time.time() - start_time
 input(f"Comms took: {fin_time}, Press Enter to continue...")
 
 
+
+
+
+
+
 #Send a message
-sock.send(bytes("CLOS", 'UTF-8'))
+sock.send(bytes("CLOS:1", 'UTF-8'))
 
 #Print the response from the socket
 print(sock.recv(4096).decode('UTF-8'))
