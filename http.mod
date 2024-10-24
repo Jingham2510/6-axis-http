@@ -99,15 +99,45 @@ MODULE http
         !Array storing the rob target values
         VAR num val_arr{17};
         
+        VAR num start_from := 1;
+        
+        VAR num next_comma_pos;
+        VAR string curr_string;
+        
         !Split the target_pos string into an array of values
-        FOR i FROM 1 TO vals DO
+        FOR i FROM 1 TO vals DO                         
+            
+
+            !Find the next comma
+            next_comma_pos := StrFind(target_pos, start_from + 1, ",");           
+            
+            !Identify the next string to be converted - stripping the commas
+            curr_string := StrPart(target_pos, start_from + 1, next_comma_pos - start_from - 1);
+            
+            TPWrite ValToStr(i) + " : " + curr_string;
             
             !Splits the target pos string, and stores it as a number
-            StrToVal(StrPart(), curr_num);
+            StrToVal(curr_string, curr_val);
             
-            val_arr{i} := curr_val;
+            
+            
+            !Place the current number into the relevant slot in the value array
+            val_arr{i} := curr_num;
+            
+            !start from the next comma
+            start_from := next_comma_pos;
+            
+            
         ENDFOR
         
+        SocketSend client_socket\Str:= "MVTO CONVERTED";
+        
+        ERROR
+            
+            !If something breaks
+            TPWrite "Invalid target position";
+            SocketSend client_socket\Str:= "INVALID POS";
+                   
         
         
     ENDPROC
