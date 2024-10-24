@@ -80,6 +80,11 @@ MODULE http
             move_to cmd_req;
 
             !if unprogrammed/unknown command is sent
+            
+        
+        CASE "STJT":
+            set_jnt cmd_req;
+            
         DEFAULT:
             SocketSend client_socket\Str:="UNKNOWN CMD";
 
@@ -88,7 +93,7 @@ MODULE http
     ENDPROC
 
 
-    !Moves the robot end-affector to a specified posiiton
+    !Moves the robot end-affector to a specified posiiton via robtarget
     PROC move_to(string target_pos)
         !decode the target pos into a robtarget variable
         VAR robtarget rob_trgt_pos;
@@ -101,8 +106,12 @@ MODULE http
         !Write out the robot target just to check
         TPWrite ValToStr(rob_trgt_pos);
 
+        
         IF ok THEN
-            SocketSend client_socket\Str:="MVTO CONVERTED";
+                    
+            !Move the robot to the target
+            MoveJ rob_trgt_pos, v1000, z20, tool0;
+            SocketSend client_socket\Str:="MVTO OK";
         ENDIF
 
         IF NOT ok THEN
@@ -110,10 +119,27 @@ MODULE http
             TPWrite "Invalid target position";
             SocketSend client_socket\Str:="INVALID POS";
         ENDIF
-
-
+    ENDPROC
+    
+    
+    !Moves the robot to a set position via target joint angles
+    PROC set_jnt(string target_jnts)
+        !Declare the joint target
+        VAR jointtarget jnt_trgt;
+        VAR bool ok;
+        
+        !Convert the string into the joint targets
+        ok := StrToVal(target_jnts, jnt_trgt);
+        MoveAbsJ jnt_trgt, v100, fine, tool0;
+        
+        !Let the client know the move happened
+        SocketSend client_socket\Str:= "JTST CMPL";
 
     ENDPROC
+        
+        
+        
+    
 
 
 

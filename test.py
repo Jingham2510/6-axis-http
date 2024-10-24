@@ -26,7 +26,13 @@ fin_time = time.time() - start_time
 input(f"ECHO took: {fin_time}, Press Enter to continue...")
 
 
-test_pos = "[[1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15,16,17]]"
+"""
+test_pos = "[[1000,200,1000],[0.5,0,0.86603,0],[1,1,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]]"
+
+print(len(test_pos))
+
+
+    
 
 start_time = time.time()
 sock.send(bytes(f"MVTO:{test_pos}", "UTF-8"))
@@ -35,6 +41,22 @@ print(sock.recv(4096).decode("UTF-8"))
 fin_time = time.time() - start_time
 # Wait till user press 'Enter' to exit
 input(f"MVTO took {fin_time} - Press Enter to continue...")
+"""
+
+
+
+#Time takes a while due to the movement of the robot itself
+test_jnts = "[[-90, 45, -45, 0, 0, 0], [9E9, 9E9, 9E9, 9E9, 9E9, 9E9]]"
+start_time = time.time()
+sock.send(bytes(f"STJT:{test_jnts}]", "UTF-8"))
+
+print(sock.recv(4096).decode("UTF-8"))
+fin_time = time.time() - start_time
+# Wait till user press 'Enter' to exit
+input(f"JTST took {fin_time} - Press Enter to continue...")
+
+
+
 
 #Send a message
 sock.send(bytes("CLOS:1", 'UTF-8'))
