@@ -26,7 +26,7 @@ fin_time = time.time() - start_time
 input(f"ECHO took: {fin_time}, Press Enter to continue...")
 
 
-test_pos = ",1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,"
+test_pos = "[[1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15,16,17]]"
 
 start_time = time.time()
 sock.send(bytes(f"MVTO:{test_pos}", "UTF-8"))

@@ -54,92 +54,65 @@ MODULE http
         VAR num req_len;
 
         !Strips the first four characters to identify the command
-        cmd_ID := StrPart(cmd,1,4);
-        !Accesses the request related to the command 
-        req_len := StrLen(cmd) - 5;
-        cmd_req:=StrPart(cmd,6, req_len);
+        cmd_ID:=StrPart(cmd,1,4);
+        !Accesses the request related to the command
+        req_len:=StrLen(cmd)-5;
+        cmd_req:=StrPart(cmd,6,req_len);
 
         TPWrite "ID:"+cmd_ID;
         TPWrite "Request: "+cmd_req;
 
         !Match case the currently programmed commands
         TEST cmd_ID
-            
-            
-            CASE "ECHO":
-                !Repeats the string back to the controller
-                SocketSend client_socket\Str:="ECHO_MSG: "+cmd_req;    
-            
+
+
+        CASE "ECHO":
+            !Repeats the string back to the controller
+            SocketSend client_socket\Str:="ECHO_MSG: "+cmd_req;
+
             !Close the sockets (should fix opening multiple similar sockets)
-            CASE "CLOS":
-                SocketSend client_socket\Str:= "CLOSING PORT";
-                close_sockets;
-            
+        CASE "CLOS":
+            SocketSend client_socket\Str:="CLOSING PORT";
+            close_sockets;
+
             !Request the robot move to a specific position
-            CASE "MVTO":
-                move_to cmd_req;
-            
+        CASE "MVTO":
+            move_to cmd_req;
+
             !if unprogrammed/unknown command is sent
-            DEFAULT:
-                SocketSend client_socket\Str:= "UNKNOWN CMD";
-            
+        DEFAULT:
+            SocketSend client_socket\Str:="UNKNOWN CMD";
+
         ENDTEST
 
     ENDPROC
 
-    
+
     !Moves the robot end-affector to a specified posiiton
     PROC move_to(string target_pos)
         !decode the target pos into a robtarget variable
         VAR robtarget rob_trgt_pos;
-        VAR num curr_num;
-        !There are 17 values in one robot target
-        CONST num vals := 17;
-        
-        !Array storing the rob target values
-        VAR num val_arr{17};
-        
-        VAR num start_from := 1;
-        
-        VAR num next_comma_pos;
-        VAR string curr_string;
-        
-        !Split the target_pos string into an array of values
-        FOR i FROM 1 TO vals DO                         
-            
 
-            !Find the next comma
-            next_comma_pos := StrFind(target_pos, start_from + 1, ",");           
-            
-            !Identify the next string to be converted - stripping the commas
-            curr_string := StrPart(target_pos, start_from + 1, next_comma_pos - start_from - 1);
-            
-            TPWrite ValToStr(i) + " : " + curr_string;
-            
-            !Splits the target pos string, and stores it as a number
-            StrToVal(curr_string, curr_val);
-            
-            
-            
-            !Place the current number into the relevant slot in the value array
-            val_arr{i} := curr_num;
-            
-            !start from the next comma
-            start_from := next_comma_pos;
-            
-            
-        ENDFOR
+        VAR bool ok;
         
-        SocketSend client_socket\Str:= "MVTO CONVERTED";
-        
-        ERROR
-            
+        !Should be able to convert to the robot target directly
+        ok:= StrToVal(target_pos,rob_trgt_pos);
+
+        !Write out the robot target just to check
+        TPWrite ValToStr(rob_trgt_pos);
+
+        IF ok THEN
+            SocketSend client_socket\Str:="MVTO CONVERTED";
+        ENDIF
+
+        IF NOT ok THEN
             !If something breaks
             TPWrite "Invalid target position";
-            SocketSend client_socket\Str:= "INVALID POS";
-                   
-        
-        
+            SocketSend client_socket\Str:="INVALID POS";
+        ENDIF
+
+
+
     ENDPROC
 
 
@@ -152,7 +125,7 @@ MODULE http
         TPWrite "Sockets Closed";
         !Exit the program
         EXIT;
-        
+
     ENDPROC
 
 ENDMODULE
