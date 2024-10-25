@@ -86,6 +86,7 @@ MODULE http
             set_jnt cmd_req;
             
         DEFAULT:
+            TPWrite "INVALID CMD: " + cmd_ID;
             SocketSend client_socket\Str:="UNKNOWN CMD";
 
         ENDTEST
@@ -130,7 +131,9 @@ MODULE http
         
         !Convert the string into the joint targets
         ok := StrToVal(target_jnts, jnt_trgt);
-        MoveAbsJ jnt_trgt, v100, fine, tool0;
+        TPWrite "MOVING";
+        
+        MoveAbsJ jnt_trgt, v50, fine, tool0;
         
         !Let the client know the move happened
         SocketSend client_socket\Str:= "JTST CMPL";

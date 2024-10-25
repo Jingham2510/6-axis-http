@@ -25,7 +25,7 @@ class six_axis_http_base():
         
         self.connected = 0
         #Create the socket
-        self.socket = socket.socket(socket.AF_INET, socket.SOCKSTREAM)
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 
     """
@@ -57,6 +57,10 @@ class six_axis_http_base():
             The response from the socket (if there is one)
             Otherwise it returns the error message
 
+            -1 - SOCKET TX/RX ERROR
+            -2 - INVALID COMMAND
+            -3 - NOT CONNECTED TO SOCKET
+
     """
     def request_resp(self, req):
         #Ensure their is a socket to send the request to
@@ -75,19 +79,63 @@ class six_axis_http_base():
 
                 except:
                     print("ERROR - SOCKET ERROR")
-                    return "SKT COMMS ERROR"
+                    return -1
 
 
 
             else:
                 print("WARNING: Invalid CMD")
-                return "INVALID CMD"
+                return -2
 
 
         else:
             print("WARNING: Socket not connected")
-            return "SKT NOT CONNECTED"
+            return -3
 
+
+
+
+    """
+    Attempts to send a request to the connected socket  - does not expect response
+    
+    Keyword Args:
+        req - The request that is sent to the socket
+
+    Returns:
+            Returns an error code if there is an error            
+            -1 - SOCKET TX/RX ERROR
+            -2 - INVALID COMMAND
+            -3 - NOT CONNECTED TO SOCKET
+
+    """
+    def request(self, req):
+        #Ensure their is a socket to send the request to
+        if self.connected:
+            
+            #Check the command is valid
+            valid_cmd = self._CMD_check(req[:4])
+
+            if valid_cmd:
+                try:
+                    #Send the request and recieve the response
+                    self.socket.send(bytes(req,"UTF-8"))
+
+                    return 1
+
+                except:
+                    print("ERROR - SOCKET ERROR")
+                    return -1
+
+
+
+            else:
+                print("WARNING: Invalid CMD")
+                return -2
+
+
+        else:
+            print("WARNING: Socket not connected")
+            return -3
 
 
 
@@ -102,7 +150,7 @@ class six_axis_http_base():
     def socket_close(self):
 
         #Tell the host to close the socket as well
-        self.request_resp("CLOS:1")
+        self.request("CLOS:1")
         
         self.socket.close()
         self.connected = 0
@@ -124,8 +172,9 @@ class six_axis_http_base():
         0 - if the CMD is invalid
     """
     def _CMD_check(self, CMD):
+       
 
-        if CMD in self.valid_CMDS.keys():
+        if any(x for x in self.valid_CMDs if x["CMD"] == CMD):
             return 1
         
         else:
