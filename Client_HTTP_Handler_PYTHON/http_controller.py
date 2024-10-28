@@ -73,11 +73,13 @@ class six_axis_http_base():
                 try:
                     #Send the request and recieve the response
                     self.socket.send(bytes(req,"UTF-8"))
-                    resp = self.sock.recv(4096).decode("UTF-8")
+                    resp = self.socket.recv(4096).decode("UTF-8")
 
                     return resp
 
-                except:
+                except Exception as e:
+                    print(e)
+
                     print("ERROR - SOCKET ERROR")
                     return -1
 

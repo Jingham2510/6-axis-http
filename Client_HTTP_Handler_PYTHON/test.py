@@ -17,7 +17,7 @@ six_axis_http.socket_connect()
 print("Connecting to Socket")
 
 
-test_jnts = "[[90, 45, -45, 0, 0, 0], [9E9, 9E9, 9E9, 9E9, 9E9, 9E9]]"
+test_jnts = "[[0, 0, 0, 0, 0, 0], [9E9, 9E9, 9E9, 9E9, 9E9, 9E9]]"
 
 resp = six_axis_http.request_resp(f"STJT:{test_jnts}")
 
@@ -34,4 +34,5 @@ six_axis_http.socket_close()
 test_pos = "[[1000,200,1000],[0.5,0,0.86603,0],[1,1,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]]"
 
 """
+
 
