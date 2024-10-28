@@ -17,14 +17,29 @@ six_axis_http.socket_connect()
 print("Connecting to Socket")
 
 
-test_jnts = "[[0, 0, 0, 0, 0, 0], [9E9, 9E9, 9E9, 9E9, 9E9, 9E9]]"
-
-resp = six_axis_http.request_resp(f"STJT:{test_jnts}")
 
 
 
 
-input(f"RESP: {resp} - Press Enter to continue...")
+
+
+test_jnt_a = "[[0, 45, 45, 0, 45, 0], [9E9, 9E9, 9E9, 9E9, 9E9, 9E9]]"
+
+test_jnt_b = "[[20, 45, 45, 0, 45, 0], [9E9, 9E9, 9E9, 9E9, 9E9, 9E9]]"
+
+
+test_jnts = [test_jnt_a, test_jnt_b]
+
+for x in test_jnts:
+    resp = six_axis_http.request_resp(f"STJT:{x}")
+    print(resp)
+
+
+
+
+
+
+#input(f"Press Enter to continue...")
 
 six_axis_http.socket_close()
 

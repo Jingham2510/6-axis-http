@@ -136,7 +136,7 @@ MODULE http
         MoveAbsJ jnt_trgt, v50, fine, tool0;
         
         !Let the client know the move happened
-        SocketSend client_socket\Str:= "JTST CMPL";
+        SocketSend client_socket\Str:= "STJT CMPL";
 
     ENDPROC
         
