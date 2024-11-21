@@ -181,3 +181,11 @@ class six_axis_http_base():
         
         else:
             return 0
+
+
+    """
+    Read the http port strings    
+    """
+    def read_port(self):
+
+        return self.socket.recv(4096).decode("UTF-8")

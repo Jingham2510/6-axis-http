@@ -78,13 +78,18 @@ MODULE http
             !Request the robot move to a specific position
         CASE "MVTO":
             move_to cmd_req;
-
-            !if unprogrammed/unknown command is sent
             
-        
+        !Set the joints specifically        
         CASE "STJT":
             set_jnt cmd_req;
+        
+        !Move the tool relative to its current position
+        CASE "MVTL":
+            move_tool cmd_req;
             
+            
+        
+        !if unprogrammed/unknown command is sent    
         DEFAULT:
             TPWrite "INVALID CMD: " + cmd_ID;
             SocketSend client_socket\Str:="UNKNOWN CMD";
@@ -139,12 +144,43 @@ MODULE http
         SocketSend client_socket\Str:= "STJT CMPL";
 
     ENDPROC
-        
-        
-        
     
+    !move the tool relative to its current position
+    PROC move_tool(string dists)
+        
+        !relative movements in the XYZ directions
+        VAR num dX;
+        VAR num dY;
+        VAR num dZ;
+        
+        VAR bool ok;        
+        
+        !Split the variables 
+        ok := StrToVal(StrPart(dists, 1, 4), dX);
+        
+        !TPWrite "dX: " + ValToStr(dX); 
+        
+        ok := StrtoVal(StrPart(dists, 6, 4), dY);
+        
+        !TPWrite "dY: " + ValToStr(dY); 
+        
+        ok := StrtoVal(StrPart(dists, 11, 4), dZ);
+        
+        !TPWrite "dZ: " + ValToStr(dZ); 
+        
+        !Move the tool as described
+        MoveLSync RelTool( CRobT(\Tool:=tool0 \WObj:=wobj0), dX, dY, dZ), v100, fine, tool0, "report_pos";
+        
+        !SocketSend client_socket\Str:= "MVTL CMPL";
+        
+    ENDPROC
+    
+    !Sends the current position to the http socket - used in conjunction with sync moves
+    PROC report_pos()
+        
+        SocketSend client_socket\Str:= ValToStr(CPos(\Tool:=tool0 \WObj:=wobj0));
 
-
+    ENDPROC
 
     !Procedure to close the sockets
     PROC close_sockets()

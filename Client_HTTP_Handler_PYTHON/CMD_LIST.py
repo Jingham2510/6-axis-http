@@ -33,6 +33,15 @@ STJT = {
     "explanation" : "Requests the robot modifies its joint angles to the requested angles"
 }
 
+#Move the tool relative to it's current position
+MVTL = {
+    "CMD" : "MVTL",
+    "format" : "MVTL:[xxxx yyyy zzzz]",
+    "explanation" : "Moves the toolframe from its relative position"
+
+}
 
 
-VALID_CMDS = [ECHO, CLOS, MVTO, STJT]
+
+
+VALID_CMDS = [ECHO, CLOS, MVTO, STJT, MVTL]
