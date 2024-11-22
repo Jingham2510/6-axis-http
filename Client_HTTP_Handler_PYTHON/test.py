@@ -5,9 +5,9 @@
 
 import http_controller
 import CMD_LIST
-import time
 import matplotlib.pyplot as plt
-
+import numpy as np
+import random
 
 six_axis_http = http_controller.six_axis_http_base("127.0.0.1", 55555, CMD_LIST.VALID_CMDS)
 
@@ -36,19 +36,33 @@ for x in test_jnts:
 z_delta = 5
 
 pos_info = []
+real_force_info = []
+
+
+rand_force_info = [random.randint(1, 100) for i in range(100)]
 
 for i in range(100):
     six_axis_http.request(f"MVTL:0000 0000 -00{z_delta}")
 
     pos_info.append((six_axis_http.read_port()).strip("[]").split(","))
 
-    print(pos_info[i])
+    real_force_info.append(np.linalg.norm((six_axis_http.read_port()).strip("[]").split(",")))
+
+    
 
 
 #input(f"Press Enter to continue...")
 
 six_axis_http.socket_close()
 
+
+#Normalise the force
+max_force = max(rand_force_info)
+normalised_force = []
+
+for i in range(len(rand_force_info)):
+
+    normalised_force.append(rand_force_info[i]/max_force)
 
 
 fig = plt.figure()
@@ -58,7 +72,10 @@ x = [float(pos[0]) for pos in pos_info]
 y = [float(pos[1]) for pos in pos_info]
 z = [float(pos[2]) for pos in pos_info]
 
-ax.plot(x, y, z)
+
+scatter = ax.scatter(x, y, z, c = plt.cm.inferno(normalised_force))
+
+fig.colorbar(scatter)
 
 plt.show()
 

@@ -1,17 +1,33 @@
 MODULE http
 
+    
+    
     !Variables to store socket info and socket commands
     VAR socketdev server_socket;
     VAR socketdev client_socket;
     VAR string receive_string;
     VAR string client_ip;
+    
+    VAR loaddata test_load :=[0.001,[0,0,0.001],[1,0,0,0],0,0,0];
+    
+    VAR fcforcevector test_force_vector;
 
     PROC main()
+        
+        !Calibrate the load sensor - the documentation reccomends making a fine movement before the calibration   
+        !test_load := FCLoadId();
+        
+        !MOVE HERE
+        !FCCalib test_load;             
+        
+
+        
+        
         !Open the local socket
         open_local_socket;
 
         TPWrite "Sockets open";
-
+        
         accept_socket;
 
         ! Waiting for a connection request
@@ -175,11 +191,24 @@ MODULE http
         
     ENDPROC
     
-    !Sends the current position to the http socket - used in conjunction with sync moves
+    !Sends the current position to the http socket
     PROC report_pos()
         
-        SocketSend client_socket\Str:= ValToStr(CPos(\Tool:=tool0 \WObj:=wobj0));
+        SocketSend client_socket\Str:= ValToStr(CPos(\Tool:=tool0 \WObj:=wobj0));      
 
+
+    ENDPROC
+    
+    
+    !Sends the current position and force to the http socket 
+    PROC report_pos_and_force()
+        
+        SocketSend client_socket\Str:= ValToStr(CPos(\Tool:=tool0 \WObj:=wobj0));
+        
+        test_force_vector := FCGetForce(\Tool:=tool0);
+        
+        SocketSend client_socket\Str:= ValToStr(test_force_vector);
+    
     ENDPROC
 
     !Procedure to close the sockets
