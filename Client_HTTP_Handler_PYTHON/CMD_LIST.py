@@ -4,7 +4,7 @@ THIS EXISTS PURELY AS DOCUMENTATION/CHECKING TO ENSURE A COMMAND EXISTS
 
 #Echo message command
 ECHO = {
-    "CMD" : "EHCO",
+    "CMD" : "ECHO",
     "format" : "ECHO:[Message you wish to bounce back]",
     "explanation" : "Requests that the host socket repeats the message back to the client"
 }

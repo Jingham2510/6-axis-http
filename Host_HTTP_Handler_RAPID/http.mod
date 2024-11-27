@@ -47,11 +47,11 @@ MODULE http
     ENDPROC
 
 
-    !Procedure to open the localhost socket - a default ip etc.
+    !Procedure to open the socket on the controller
     PROC open_local_socket()
 
         SocketCreate server_socket;
-        SocketBind server_socket,"127.0.0.1",55555;
+        SocketBind server_socket,"192.168.125.1", 55555;
         SocketListen server_socket;
 
     ENDPROC
@@ -75,8 +75,8 @@ MODULE http
         req_len:=StrLen(cmd)-5;
         cmd_req:=StrPart(cmd,6,req_len);
 
-        TPWrite "ID:"+cmd_ID;
-        TPWrite "Request: "+cmd_req;
+        !TPWrite "ID:"+cmd_ID;
+        !TPWrite "Request: "+cmd_req;
 
         !Match case the currently programmed commands
         TEST cmd_ID
