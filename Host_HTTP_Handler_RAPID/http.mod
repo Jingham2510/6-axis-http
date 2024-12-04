@@ -49,10 +49,24 @@ MODULE tcp
 
     !Procedure to open the socket on the controller
     PROC open_local_socket()
-
+        
         SocketCreate server_socket;
-        SocketBind server_socket,"192.168.125.1", 55555;
-        SocketListen server_socket;
+        
+        !Check if virutal controller or real
+        !ROBOS =True is real controller
+        IF ROBOS() THEN
+
+        
+            SocketBind server_socket,"192.168.125.1", 55555;
+        
+        
+        ELSE
+                SocketBind server_socket,"127.0.0.1", 55555;
+        
+        
+        ENDIF
+        
+            SocketListen server_socket;
 
     ENDPROC
 
