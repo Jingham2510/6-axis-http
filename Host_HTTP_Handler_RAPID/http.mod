@@ -1,4 +1,4 @@
-MODULE http
+MODULE tcp
 
     
     
@@ -191,7 +191,7 @@ MODULE http
         
     ENDPROC
     
-    !Sends the current position to the http socket
+    !Sends the current position to the tcp socket
     PROC report_pos()
         
         SocketSend client_socket\Str:= ValToStr(CPos(\Tool:=tool0 \WObj:=wobj0));      
@@ -200,7 +200,7 @@ MODULE http
     ENDPROC
     
     
-    !Sends the current position and force to the http socket 
+    !Sends the current position and force to the tcp socket 
     PROC report_pos_and_force()
         
         SocketSend client_socket\Str:= ValToStr(CPos(\Tool:=tool0 \WObj:=wobj0));
