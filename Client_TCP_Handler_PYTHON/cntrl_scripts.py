@@ -96,6 +96,8 @@ def latency_test(tcp):
         steps.append(i)
 
 
+    """
+
     print(f"Total time taken for {i + 1} requests: {time.time() - total_start}")
 
     print(f"Median time: {np.median(latencies)}")
@@ -108,7 +110,15 @@ def latency_test(tcp):
 
     plt.show()
 
+    """
 
+    #Saves the data to a text file
+    with open("C:/Users/User/Documents/Results/robot_latency_tests/raw/latency_python.txt", "w+") as f:
+        for pnt in latencies:
+            f.write(f"{pnt}\n")
+
+            print("Data saved")
+    f.close()
 
 
     
