@@ -23,7 +23,7 @@ def move_up_measure_force(tcp):
     rand_force_info = [random.randint(1, 100) for i in range(100)]
 
     for i in range(100):
-        tcp.request(f"MVTL:0000 0000 -00{z_delta}")
+        tcp.request(f"MVTL:0, 0, -{z_delta}")
 
         pos_info.append((tcp.read_port()).strip("[]").split(","))
 

@@ -18,8 +18,7 @@ MODULE tcp
         !test_load := FCLoadId();
         
         !MOVE HERE
-        !FCCalib test_load;             
-        
+        !FCCalib test_load;         
 
         
         
@@ -61,7 +60,7 @@ MODULE tcp
         
         
         ELSE
-                SocketBind server_socket,"127.0.0.1", 8888;
+            SocketBind server_socket,"127.0.0.1", 8888;
         
         
         ENDIF
@@ -164,14 +163,27 @@ MODULE tcp
         VAR jointtarget jnt_trgt;
         VAR bool ok;
         
+        
+
         !Convert the string into the joint targets
         ok := StrToVal(target_jnts, jnt_trgt);
-        TPWrite "MOVING";
+
         
-        MoveAbsJ jnt_trgt, v50, fine, tool0;
+        IF ok THEN
+            
+            TPWrite ValToStr(jnt_trgt);
+            
+            MoveAbsJ jnt_trgt, v50, fine, tool0;
+            
+            !Let the client know the move happened
+            SocketSend client_socket\Str:= "STJT CMPL";
         
-        !Let the client know the move happened
-        SocketSend client_socket\Str:= "STJT CMPL";
+        ELSE
+            !If something breaks
+            TPWrite "Invalid target joints";
+            SocketSend client_socket\Str:="INVALID ANGLES";
+            
+        ENDIF
 
     ENDPROC
     
@@ -185,19 +197,46 @@ MODULE tcp
         
         VAR bool ok;        
         
-        !Split the variables 
-        ok := StrToVal(StrPart(dists, 1, 4), dX);
         
-        !TPWrite "dX: " + ValToStr(dX); 
+        VAR num start_char := 1;
+        VAR num end_char;
+        VAR num i := 0;
+        VAR string curr_num;
         
-        ok := StrtoVal(StrPart(dists, 6, 4), dY);
+        !Arrays in rapid start at 1 
+        WHILE i < 3 DO                 
+            
+            
+            !Update the end - find the comma
+            end_char := StrFind(dists, start_char + 1, ",");  
+                        
+            IF i = 0 OR i = 1 THEN
+            !Find the next value
+            curr_num := StrPart(dists, start_char + 1, end_char - start_char - 1);     
+            ENDIF
+            
+            !sort the variables
+            IF i = 0 THEN    
+               TpWrite("X: " + curr_num);
+               ok := StrToVal(curr_num, dX);   
+            ELSEIF i = 1 THEN       
+                TpWrite("Y: " + curr_num);
+                ok := StrToVal(curr_num, dY);
+            ELSEIF i = 2 THEN
+                !Special formatting to ignore square bracket
+                curr_num := StrPart(dists, start_char + 1, StrLen(dists) - start_char - 1);   
+                TpWrite("Z: " + curr_num);
+                ok := StrToVal(curr_num, dZ);
+            ENDIF
+            
+            i := i + 1;
+            
+            !Move the starting point
+            start_char := end_char;
         
-        !TPWrite "dY: " + ValToStr(dY); 
+        ENDWHILE        
         
-        ok := StrtoVal(StrPart(dists, 11, 4), dZ);
-        
-        !TPWrite "dZ: " + ValToStr(dZ); 
-        
+                
         !Move the tool as described
         MoveLSync RelTool( CRobT(\Tool:=tool0 \WObj:=wobj0), dX, dY, dZ), v100, fine, tool0, "report_pos";
         

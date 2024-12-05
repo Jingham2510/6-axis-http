@@ -28,14 +28,14 @@ MVTO = {
 #Set joints Command
 STJT = {
     "CMD" : "STJT",
-    "format" : "STJT:[[ax1, ax2, ax3, ax4, ax5, ax6], [eax_a, eax_b, eax_c, eax_d, eax_e, eax_f]]",
+    "format" : "STJT:[[ax1,ax2,ax3,ax4,ax5,ax6], [eax_a,eax_b,eax_c,eax_d,eax_e,eax_f]]",
     "explanation" : "Requests the robot modifies its joint angles to the requested angles"
 }
 
 #Move the tool relative to it's current position
 MVTL = {
     "CMD" : "MVTL",
-    "format" : "MVTL:[xxxx yyyy zzzz]",
+    "format" : "MVTL:[x,y,z]",
     "explanation" : "Moves the toolframe from its relative position"
 
 }
