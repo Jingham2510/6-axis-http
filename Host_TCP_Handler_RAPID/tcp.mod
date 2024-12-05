@@ -57,11 +57,11 @@ MODULE tcp
         IF ROBOS() THEN
 
         
-            SocketBind server_socket,"192.168.125.1", 55555;
+            SocketBind server_socket,"192.168.125.1", 8888;
         
         
         ELSE
-                SocketBind server_socket,"127.0.0.1", 55555;
+                SocketBind server_socket,"127.0.0.1", 8888;
         
         
         ENDIF
