@@ -116,7 +116,8 @@ MODULE tcp
         CASE "MVTL":
             move_tool cmd_req;
             
-            
+        CASE "GTPS":
+            report_pos;            
         
         !if unprogrammed/unknown command is sent    
         DEFAULT:
@@ -238,7 +239,7 @@ MODULE tcp
         
                 
         !Move the tool as described
-        MoveLSync RelTool( CRobT(\Tool:=tool0 \WObj:=wobj0), dX, dY, dZ), v100, fine, tool0, "report_pos";
+        MoveLSync RelTool( CRobT(\Tool:=tool0 \WObj:=wobj0), dX, dY, dZ), v100, fine, tool0, "report_pos_and_force";
         
         !SocketSend client_socket\Str:= "MVTL CMPL";
         
@@ -263,6 +264,9 @@ MODULE tcp
         SocketSend client_socket\Str:= ValToStr(test_force_vector);
     
     ENDPROC
+    
+    
+    
 
     !Procedure to close the sockets
     PROC close_sockets()
